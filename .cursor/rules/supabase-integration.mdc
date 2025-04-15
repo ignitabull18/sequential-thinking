@@ -1,0 +1,49 @@
+---
+description: Working with Supabase for database managment and authentication.
+globs: 
+alwaysApply: false
+---
+ ```mdc
+description: Guidelines for integrating with Supabase
+tags: ["supabase", "database", "auth", "storage", "pgvector", "security"]
+globs: ["src/db.ts", "src/auth.js", "app/db.py", "app/auth.py", "**/supabase_client.py", "**/supabaseClient.js"]
+
+---
+
+# Supabase Integration Guidelines
+
+## Authentication
+- **Mandatory**: Use **Supabase Auth** for all user authentication and session management within the MCP Forge platform itself.
+- **Generated Servers**: Generated MCP servers should *not* typically handle user authentication directly. User identity/permissions might be passed via secure headers or tokens if needed, validated against Supabase by the server if required by the specific tool logic.
+
+## API Key Management
+- **Mandatory**: All user-provided API keys (OpenAI, Jira, etc.) **must** be stored securely in a dedicated Supabase table (e.g., `api_keys`).
+- **Encryption**: Ensure keys are encrypted at rest in Supabase.
+- **RLS**: Apply strict Row Level Security (RLS) so users can only access their own keys.
+- **Injection**: Keys must be injected into deployed MCP servers **only** as environment variables during the Coolify deployment process. Reference `api-key-management.mdc`.
+
+## Database Usage (for Generated Servers)
+- **Optional**: If a generated MCP server requires its own persistent storage, provide a standard way to connect to the user's Supabase project database.
+- **Connection String**: Inject the Supabase connection string as an environment variable (e.g., `SUPABASE_DB_URL`).
+- **RLS**: Advise users to set up appropriate RLS policies within their own Supabase project for the tables used by the generated server.
+
+## Documentation Storage & Search (pgvector)
+- **Mandatory**: User-uploaded documentation (for requirements analysis or tool context) **must** be processed as follows:
+  1. Store the raw file in **Supabase Storage** (optional, based on configuration).
+  2. Extract text content.
+  3. Generate embeddings (e.g., using OpenAI).
+  4. Store text and embeddings in a dedicated Supabase table (e.g., `documents`) with a `vector` column using the `pgvector` extension.
+  5. Apply RLS to the `documents` table.
+- **Usage**: Utilize semantic search against this table during requirements analysis and code generation phases.
+
+## Security
+- **RLS**: Enforce Row Level Security on *all* Supabase tables containing user data.
+- **Service Role Key**: Use the `SUPABASE_SERVICE_ROLE_KEY` **only** in secure backend environments (like the MCP Forge backend itself). **Never** expose it in generated client-side code or insecurely stored server code.
+- **Anon Key**: Use the `SUPABASE_ANON_KEY` for client-side interactions where appropriate, relying on RLS for security.
+
+## References
+- [Supabase Documentation](mdc:https:/supabase.com/docs)
+- [pgvector Documentation](mdc:https:/github.com/pgvector/pgvector)
+- `api-key-management.mdc`
+- `security-best-practices.mdc`
+```

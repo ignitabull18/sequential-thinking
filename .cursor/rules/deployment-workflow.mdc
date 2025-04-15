@@ -1,0 +1,51 @@
+---
+description: Wehn deploying with Coolify.
+globs: 
+alwaysApply: false
+---
+ ```mdc
+description: Standards for deploying MCP servers using Coolify
+tags: ["deployment", "coolify", "github", "automation", "cicd"]
+globs: ["deploy.sh", "Dockerfile", "docker-compose.yml", ".github/workflows/*"]
+
+---
+
+# Deployment Workflow Standards (Coolify)
+
+## Target Platform
+- All MCP server deployments **must** target **Coolify**.
+- No other deployment platforms are supported in this phase.
+
+## Source Code Repository (New Servers)
+- For newly generated MCP servers, a **private GitHub repository** **must** be created.
+- The generated code **must** be pushed to this repository.
+- Provide the user with the link to the repository.
+
+## Source Code Repository (Existing Servers)
+- For deploying existing open-source MCP servers, the system **must** clone the provided GitHub URL.
+- The system should attempt to automatically detect language (Node.js/Python) and standard build/start commands.
+- Prompt the user to confirm or modify the detected settings before deployment.
+
+## Coolify Configuration
+- **Automation**: Use the Coolify API or CLI for deployment automation.
+- **Build Process**: Configure appropriate build packs or Dockerfile instructions.
+- **Start Command**: Set the correct command to start the MCP server.
+- **Environment Variables**: Inject **all** required environment variables (API keys from Supabase, Supabase DB URL if needed, etc.) securely during the Coolify deployment setup. Do **not** hardcode secrets in the repository.
+- **Health Check**: Configure Coolify to use the server's `/health` endpoint for deployment validation and ongoing monitoring.
+- **URL**: Configure the deployment URL to follow the standard format: `https://{service-name}.mcp.ignitabull.org`.
+
+## Output to User
+- Upon successful deployment, provide the user with:
+  - The final deployment URL.
+  - The link to the private GitHub repository (if applicable).
+  - The Claude Desktop configuration snippet.
+  - A summary of required environment variables (names only, not values).
+
+## Security
+- Ensure the GitHub token and Coolify API token are securely managed (e.g., via environment variables in the MCP Forge backend) and **never** exposed.
+
+## References
+- [Coolify Documentation](mdc:https:/coolify.io/docs/get-started/introduction)
+- `api-key-management.mdc`
+- `mcp-server-generation.mdc`
+```

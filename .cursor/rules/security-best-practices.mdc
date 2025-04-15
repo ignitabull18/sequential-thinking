@@ -1,0 +1,65 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+ ```mdc
+description: General security best practices for MCP Forge and generated servers
+tags: ["security", "best-practices", "vulnerabilities", "owasp"]
+globs: ["**/*.py", "**/*.js", "**/*.ts", "Dockerfile", "*.tf", "*.json", "*.yaml"]
+
+---
+
+# General Security Best Practices
+
+## Input Validation
+- **Mandatory**: Always validate and sanitize **all** incoming data from external sources (user input, API responses, message parameters).
+- **Tools**: Use robust validation libraries like **Zod** (Node.js) or **Pydantic** (Python).
+- **Scope**: Apply validation at API boundaries, especially the MCP `/messages` endpoint and any UI forms.
+
+## Output Encoding
+- Ensure proper output encoding is used when displaying data in HTML to prevent Cross-Site Scripting (XSS) vulnerabilities. Use templating engines' built-in encoding features.
+
+## Secret Management
+- **Strictly adhere** to the `api-key-management.mdc` rule. Never hardcode secrets.
+- Use environment variables exclusively for secrets, injected securely during deployment.
+- Utilize Supabase for secure storage and management of user API keys.
+
+## Authentication & Authorization
+- **MCP Forge Platform**: Secure user access using Supabase Auth.
+- **Supabase**: Implement Row Level Security (RLS) diligently on all tables containing user-specific or sensitive data.
+- **Generated Servers**: Generated servers typically don't handle end-user auth, but if they interact with protected resources, they must use API keys/tokens securely obtained from environment variables.
+
+## Dependency Management
+- Keep all dependencies (backend, frontend, OS packages in Docker images) **up-to-date**.
+- Regularly scan dependencies for known vulnerabilities using tools like `npm audit`, `pip-audit`, or integrated GitHub Dependabot/Coolify features.
+
+## Least Privilege
+- Operate all processes and access all resources (APIs, databases) using the **minimum necessary permissions**.
+- Create specific, scoped API keys for external services.
+- Configure database users with restricted privileges.
+
+## Logging
+- Implement sufficient logging for monitoring and debugging.
+- **Crucial**: **Never** log sensitive information like API keys, passwords, session tokens, or personally identifiable information (PII).
+
+## Transport Security
+- Ensure all communication uses HTTPS.
+- Configure Coolify to handle TLS termination.
+
+## CORS
+- Configure Cross-Origin Resource Sharing (CORS) policies restrictively on MCP servers, allowing only expected origins (e.g., the MCP Forge frontend, Claude Desktop).
+
+## Rate Limiting
+- Consider implementing rate limiting on public-facing API endpoints (including MCP endpoints) to prevent abuse.
+
+## Docker Security
+- Use minimal base Docker images.
+- Run containers as non-root users.
+- Scan Docker images for vulnerabilities.
+
+## References
+- `api-key-management.mdc`
+- `supabase-integration.mdc`
+- [OWASP Top Ten](https://owasp.org/www-project-top-ten/)
+```

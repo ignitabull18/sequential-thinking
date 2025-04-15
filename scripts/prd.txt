@@ -1,0 +1,274 @@
+# Product Requirements Document (PRD)
+
+## Product Name
+**MCP Forge** – Automated MCP Server Builder & Deployment System
+
+---
+
+## 1. Purpose
+
+MCP Forge is an AI-driven platform that enables users to generate, configure, and deploy custom Model Context Protocol (MCP) servers using natural language descriptions, optional documentation, or by simply providing a GitHub URL for an existing open-source MCP server. The system automates the entire lifecycle: requirements gathering, code generation (Node.js or Python), GitHub repository creation, deployment to Coolify, and basic testing.  
+**Supabase** is used for authentication, secure API key management, as the default PostgreSQL database (with pgvector for embeddings), and for storing and searching user-uploaded documentation.
+
+---
+
+## 2. Background & Motivation
+
+- **Model Context Protocol (MCP)** is an open protocol for connecting LLMs to external tools and data, using HTTP/SSE endpoints.
+- **Coolify** is a modern PaaS for self-hosting and deploying applications.
+- **Supabase** provides a scalable, secure backend for authentication, database, and vector search.
+- Building MCP servers is currently manual and requires expertise in both protocol and deployment.
+- There is a need for a system that can automate this process, lower the barrier to entry, and ensure best practices (security, error handling, maintainability).
+
+---
+
+## 3. Goals & Objectives
+
+- Allow users to describe desired MCP server functionality in natural language, upload documentation, or provide a GitHub URL for an existing MCP server.
+- Optionally accept documentation (API specs, examples) to inform server generation.
+- Automatically generate a standards-compliant MCP server (Node.js or Python) or deploy an existing one.
+- Create a private GitHub repository with the generated code (if new).
+- Deploy the server to Coolify, handling all configuration.
+- Provide users with:
+  - Deployed server URL (using the format: `https://{service-name}.mcp.ignitabull.org`)
+  - GitHub repo link (if applicable)
+  - Claude Desktop configuration snippet
+  - Documentation and environment variable requirements
+- Support extensibility for new tool/resource types and future deployment enhancements.
+- Use Supabase for:
+  - User authentication and session management
+  - Secure API key storage and retrieval
+  - Storing and searching user-uploaded documentation (with pgvector)
+  - As a default database for generated servers (if needed)
+
+---
+
+## 4. Features
+
+### 4.1 User Interface
+
+- **Web-based, multi-step wizard**:
+  - Step 1: Describe server (text input, language toggle) or enter GitHub URL
+  - Step 2: Upload documentation (optional, drag-and-drop)
+  - Step 3: Enter GitHub and Coolify credentials, repo name (if generating new)
+  - Step 4: Build progress (real-time status updates, animations)
+  - Step 5: Results (links, config, next steps)
+- **Modern UI**: Tailwind CSS, DaisyUI, anime.js for animations
+- **Settings Section**: Centralized UI for users to securely store/manage API keys and secrets (backed by Supabase). All generated or deployed servers will automatically use these keys via environment variables.
+- **Authentication**: All users sign up and log in via Supabase Auth (email/password, OAuth, etc.).
+
+### 4.2 Backend System
+
+- **Requirements Analysis**: Extracts structured requirements and generates clarifying questions.
+- **Documentation Analyzer**:
+  - Uploaded docs are stored in Supabase Storage (optional).
+  - Text is extracted, embedded (using OpenAI or similar), and stored in a Supabase `documents` table with a `vector` column (pgvector).
+  - Semantic search is performed on documentation using pgvector.
+- **Code Generation**:
+  - Node.js (Express, @modelcontextprotocol/sdk) or Python (Flask, mcp-server-sdk)
+  - Dynamic tool/resource loading
+  - Standard endpoints: `/sse`, `/messages`, `/health`, `/info`, `/docs`
+  - Error handling, CORS, environment variable usage
+- **Open Source MCP Server Deployment**:
+  - User provides a GitHub URL for any open-source MCP server.
+  - The system clones the repo, detects language, configures build/start commands, and prompts the user to deploy as-is or modify.
+  - Deploys to Coolify with the correct environment and health checks.
+  - Injects environment variables (API keys, DB credentials) from the settings section (stored in Supabase).
+  - Sets the deployment URL as `https://{service-name}.mcp.ignitabull.org`.
+- **GitHub Integration**:
+  - Creates private repo (if generating new)
+  - Pushes generated code
+- **Coolify Integration**:
+  - Deploys server
+  - Configures build/start commands, environment variables
+  - Health check endpoint for deployment validation
+- **Testing**:
+  - Generates and runs basic test cases for each tool
+  - Reports test results to user
+
+### 4.3 Supabase Integration
+
+- **Authentication**: All user accounts and sessions are managed via Supabase Auth.
+- **API Key Management**:  
+  - API keys are stored in a Supabase `api_keys` table, encrypted at rest, and only accessible to the authenticated user.
+  - Keys are injected as environment variables during server deployment.
+- **Documentation Storage & Semantic Search**:  
+  - Uploaded documentation is embedded and stored in a `documents` table with a `vector` column (pgvector).
+  - Semantic search is used to enhance requirements analysis and tool/resource generation.
+- **Database for Generated Servers**:  
+  - Generated MCP servers can be provisioned with a Supabase connection string for their own data needs.
+  - All database credentials are managed via environment variables and injected at deploy time.
+- **Row Level Security (RLS)**:  
+  - Enforced for all user data tables to ensure privacy and security.
+
+### 4.4 Security & Best Practices
+
+- All secrets (API keys, tokens) are stored as environment variables in the settings section (backed by Supabase).
+- Input validation using Zod (Node.js) or Pydantic (Python).
+- CORS configuration, rate limiting, and logging (excluding sensitive data).
+- Follows MCP protocol specification and Coolify deployment best practices.
+- Only HTTP/SSE transport is supported; STDIO and other transports are never used or generated.
+- Supabase RLS and encryption at rest for all sensitive data.
+
+### 4.5 Extensibility
+
+- Modular agent-based architecture for requirements, architecture, code generation, deployment, and testing.
+- Easy to add new tool/resource templates or deployment enhancements.
+
+---
+
+## 5. User Stories
+
+1. **As a developer**, I want to describe an MCP server I need, so I can get a working deployment without writing code.
+2. **As a developer**, I want to deploy an existing open-source MCP server by just providing its GitHub URL.
+3. **As a user**, I want to securely store my API keys in a settings section, so I never have to re-enter them for each deployment.
+4. **As a user**, I want to see build progress and get notified when my server is ready.
+5. **As a team lead**, I want to ensure all generated servers follow security and protocol best practices.
+6. **As an AI agent**, I want to programmatically generate and deploy MCP servers for new integrations.
+7. **As a user**, I want to upload documentation and have it semantically searchable for future server/tool generation.
+8. **As a developer**, I want my generated MCP server to have a ready-to-use Supabase database if needed.
+
+---
+
+## 6. Technical Requirements
+
+- **Frontend**: HTML, Tailwind CSS, DaisyUI, anime.js, vanilla JS (or React if needed)
+- **Backend**: FastAPI (Python) or Express (Node.js)
+- **Supabase**:  
+  - Auth for user/session management  
+  - PostgreSQL with pgvector for documentation and semantic search  
+  - Storage for raw files (optional)  
+  - Secure API key storage and retrieval
+- **Code Generation**: OpenAI GPT-4 (via API), using chat.completions.create
+- **GitHub API**: For repo creation and code push
+- **Coolify API**: For deployment and status monitoring
+- **Testing**: Automated test case generation and execution
+- **Environment Variables**: For all secrets (OPENAI_API_KEY, GITHUB_TOKEN, COOLIFY_TOKEN, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, etc.)
+- **URL Naming**: All deployed MCP servers use the format `https://{service-name}.mcp.ignitabull.org`
+
+---
+
+## 7. MCP Server Standards & Cheatsheet Integration
+
+All generated or deployed MCP servers must:
+
+- Expose the following endpoints:
+  - **GET /sse**: Main SSE connection endpoint for MCP clients
+  - **POST /messages?connectionId=[id]**: Message endpoint for MCP clients
+  - **GET /health**: Health check endpoint
+  - **GET /info**: Server information endpoint
+  - **GET /docs**: Human-readable documentation endpoint
+- Use only HTTP/SSE transport (never STDIO).
+- Dynamically load tools and resources from standard directories.
+- Use environment variables for all secrets and configuration (including Supabase connection strings if needed).
+- Provide a Claude Desktop configuration snippet for easy integration.
+- Follow best practices for CORS, error handling, and input validation.
+- Support integration with other MCP servers (e.g., GitHub, Postman) via tools.
+- **See the Enhanced MCP Cheatsheet (Supabase Edition) for full code templates, endpoint details, and integration examples.**
+
+---
+
+## 8. Security Considerations
+
+- **CORS Configuration**: Restrict origins as appropriate for production.
+- **Rate Limiting**: Implement for public-facing servers.
+- **Input Validation**: Always validate all input with Zod (Node.js) or Pydantic (Python).
+- **Logging**: Exclude sensitive data from logs.
+- **Environment Variables**: All secrets are managed in the settings section (Supabase) and injected at deploy time.
+- **Least Privilege**: Use minimal permissions for all API keys.
+- **Supabase RLS**: Enforced for all user data tables.
+- **Encryption at Rest**: All sensitive data (API keys, embeddings) is encrypted.
+- **Regular Updates**: Keep dependencies updated to address vulnerabilities.
+
+---
+
+## 9. Success Metrics
+
+- **Open Source Deployment**: >95% of open-source MCP servers with standard endpoints can be deployed with a single GitHub URL and no manual intervention.
+- **API Key Management**: 100% of deployments requiring API keys use the centralized settings section (Supabase).
+- **HTTP-Only**: No deployments or code generation ever use STDIO or non-HTTP transports.
+- **Time to Deploy**: <5 minutes from user input to deployed server for typical use cases.
+- **User Satisfaction**: Measured via feedback prompt after deployment.
+- **Semantic Search**: >90% accuracy in retrieving relevant documentation for tool/resource generation.
+
+---
+
+## 10. Future Enhancements
+
+- **One-Click Open Source MCP Server Deployment**  
+  - Users can provide a GitHub URL for any open-source MCP server.
+  - The system will:
+    - Clone the repo
+    - Detect language (Node.js or Python)
+    - Configure build/start commands automatically
+    - Prompt the user if they want to modify the server or deploy as-is
+    - Deploy to Coolify with the correct environment and health checks
+    - Return the deployed URL in the format:  
+      `https://{service-name}.mcp.ignitabull.org`
+- **Settings Section for API Keys**  
+  - Centralized UI for users to securely store/manage API keys and secrets (Supabase).
+  - All generated or deployed servers will automatically use these keys via environment variables.
+  - The AI agent can access these keys for code generation and deployment, but never exposes them in logs or UI.
+- **Semantic Documentation Search**  
+  - All uploaded documentation is embedded and stored in Supabase with pgvector.
+  - Semantic search is used to enhance requirements analysis and tool/resource generation.
+- **No Additional Language/Cloud Targets (for now)**  
+  - Only Node.js and Python are supported.
+  - Only Coolify is supported as a deployment target.
+- **No Marketplace**  
+  - No public or community-contributed tool/resource marketplace in this phase.
+
+---
+
+## 11. Example User Flows
+
+### 11.1 New MCP Server Generation
+
+1. User describes:  
+   "I need an MCP server that connects to the Jira API and allows searching for issues, creating new issues, and updating existing ones."
+2. System analyzes requirements, asks clarifying questions, generates code, creates a GitHub repo, deploys to Coolify, and returns:
+   - Deployed URL: `https://jira-mcp.mcp.ignitabull.org`
+   - Claude Desktop config
+   - Required environment variables (e.g., JIRA_API_KEY)
+   - If the server needs a database, a Supabase connection string is provided and injected.
+
+### 11.2 Open Source MCP Server Deployment
+
+1. User enters:  
+   `https://github.com/modelcontextprotocol/example-mcp-server`
+2. System:
+   - Clones repo
+   - Detects Node.js
+   - Finds `/sse`, `/messages`, `/health` endpoints
+   - Prompts: "Deploy as-is or modify?"
+   - User selects "Deploy as-is"
+   - System deploys to Coolify at  
+     `https://example-mcp-server.mcp.ignitabull.org`
+   - Injects API keys from settings (Supabase)
+   - Returns deployed URL, health check, Claude config
+
+### 11.3 Documentation Upload & Semantic Search
+
+1. User uploads API documentation or specs.
+2. System stores the file in Supabase Storage (optional), extracts text, generates embeddings, and stores in the `documents` table (pgvector).
+3. When generating a new server or tool, the system uses semantic search to retrieve relevant documentation and context.
+
+---
+
+## 12. References
+
+- [Enhanced MCP Cheatsheet (Supabase Edition)](#) (internal)
+- [Model Context Protocol Specification](https://modelcontextprotocol.io/specification/2024-11-05)
+- [Coolify Documentation](https://coolify.io/docs/get-started/introduction)
+- [Supabase Documentation](https://supabase.com/docs)
+- [pgvector Documentation](https://github.com/pgvector/pgvector)
+
+---
+
+**Prepared by:**  
+AI Product/Engineering Team  
+**Date:** 2024-06-10
+
+---
+
+Let me know if you want a visual flow, wireframes, or further breakdowns of any section! 

@@ -1,0 +1,57 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+ ```mdc
+description: Standards for generating MCP servers (Node.js/Python)
+tags: ["code-generation", "mcp", "backend", "node", "python"]
+globs: ["src/server.ts", "src/server.js", "app/main.py", "**/tools/*.py", "**/tools/*.js", "**/resources/*.py", "**/resources/*.js"]
+
+---
+
+# MCP Server Generation Standards
+
+## Required Endpoints
+All generated or deployed MCP servers **must** expose the following standard endpoints:
+- `GET /sse`: Main SSE connection endpoint.
+- `POST /messages?connectionId=[id]`: Message endpoint.
+- `GET /health`: Health check endpoint (essential for Coolify).
+- `GET /info`: Server information endpoint.
+- `GET /docs`: Human-readable documentation endpoint.
+
+## Transport Protocol
+- Only **HTTP/SSE** transport is allowed.
+- **Never** use or generate code for STDIO or other transport methods.
+
+## Configuration & Secrets
+- All configuration (API keys, database URLs, etc.) **must** be managed via **environment variables**.
+- Refer to the `api-key-management.mdc` rule for storing secrets in Supabase.
+- Provide a `.env.example` file.
+
+## Core Libraries
+- **Node.js**: Use `@modelcontextprotocol/sdk`.
+- **Python**: Use `mcp-server-sdk`.
+
+## Best Practices
+- Implement **robust error handling**.
+- Configure **CORS** appropriately.
+- Use **input validation** (Zod for Node.js, Pydantic for Python) for all incoming requests, especially `/messages`.
+- Dynamically load tools and resources from standard directories (e.g., `tools/`, `resources/`).
+
+## Claude Desktop Integration
+- Always provide a **Claude Desktop configuration snippet** in the final output for the user. Example:
+  ```json
+  {
+    "name": "{service-name}",
+    "description": "Generated MCP Server",
+    "serverUrl": "https://{service-name}.mcp.ignitabull.org/sse",
+    "messageUrl": "https://{service-name}.mcp.ignitabull.org/messages",
+    "infoUrl": "https://{service-name}.mcp.ignitabull.org/info"
+  }
+  ```
+
+## References
+- [MCP Specification](mdc:https:/modelcontextprotocol.io/specification/2024-11-05)
+- [MCP Enhanced Cheatsheet (Supabase Edition)](mdc:#) (Internal PRD reference)
+```

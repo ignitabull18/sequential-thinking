@@ -1,0 +1,46 @@
+---
+description: When building frontend.
+globs: 
+alwaysApply: false
+---
+ ```mdc
+description: Standards for the MCP Forge user interface
+tags: ["ui", "ux", "frontend", "tailwind", "daisyui", "animejs"]
+globs: ["*.html", "*.css", "*.js", "templates/**/*.html", "static/js/*.js", "static/css/*.css"]
+
+---
+
+# UI/UX Standards
+
+## Core Technologies
+- **CSS Framework**: **Tailwind CSS** is mandatory for all styling.
+- **Component Library**: **DaisyUI** (built on Tailwind) **must** be used for UI components (buttons, forms, modals, cards, etc.) to ensure consistency.
+- **Animations**: Use **anime.js** for complex JavaScript-driven animations. Simple transitions and effects can use Tailwind/CSS animations.
+
+## Design Principles
+- **Consistency**: Maintain a consistent look and feel across the entire application using DaisyUI themes and components.
+- **Clarity**: Ensure interfaces are intuitive and easy to understand. Use clear labeling and visual hierarchy.
+- **Responsiveness**: The UI **must** be fully responsive and usable on various screen sizes (desktop, tablet, mobile).
+- **Accessibility**: Follow basic web accessibility (a11y) guidelines (semantic HTML, ARIA attributes where needed, keyboard navigation).
+
+## Specific UI Elements
+- **Wizard**: Implement the multi-step server creation/deployment process using a clear wizard interface (e.g., DaisyUI `steps` component).
+- **Forms**: Use DaisyUI form components for all inputs, selects, text areas, etc. Include appropriate validation feedback.
+- **Feedback**: Provide immediate visual feedback for user actions (e.g., button clicks, successful uploads).
+- **Waiting/Loading States**: **Crucial**: Implement clear waiting/loading indicators (e.g., spinners, progress bars using DaisyUI `progress` or custom anime.js animations) during asynchronous operations like:
+    - Requirements analysis
+    - Code generation
+    - GitHub repository creation
+    - Coolify deployment
+    - Documentation processing
+- **Settings Section**: Design a clear and secure interface for managing API keys (masking secrets).
+- **Error Messages**: Display user-friendly error messages, distinct from loading states.
+
+## File Structure
+- Organize CSS, JavaScript, and HTML templates logically (e.g., `static/css`, `static/js`, `templates/`).
+
+## References
+- [Tailwind CSS Documentation](mdc:https:/tailwindcss.com/docs)
+- [DaisyUI Documentation](mdc:https:/daisyui.com/docs/use)
+- [anime.js Documentation](mdc:https:/animejs.com/documentation)
+```

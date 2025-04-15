@@ -1,0 +1,24 @@
+# Task ID: 8
+# Title: Implement Coolify Deployment Integration
+# Status: pending
+# Dependencies: 7
+# Priority: high
+# Description: Create the system for deploying generated or existing MCP servers to Coolify with proper configuration.
+# Details:
+1. Implement Coolify API integration for deployment
+2. Create system for configuring build/start commands based on language
+3. Implement environment variable injection from user settings
+4. Add health check endpoint configuration
+5. Create custom domain setup for format: https://{service-name}.mcp.ignitabull.org
+6. Implement deployment status monitoring
+7. Add error handling for deployment failures
+8. Create system for retrieving deployment URL for user
+
+# Test Strategy:
+1. Test deployment with various repository types
+2. Verify environment variables are correctly injected
+3. Validate health check configuration
+4. Test custom domain setup
+5. Confirm deployment status monitoring works
+6. Test error handling for deployment failures
+7. Verify deployed server is accessible and functioning

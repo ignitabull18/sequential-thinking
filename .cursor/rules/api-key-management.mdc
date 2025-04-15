@@ -1,0 +1,46 @@
+---
+description: When working with API keys to manage them site wide.
+globs: 
+alwaysApply: false
+---
+ ```mdc
+description: Secure management of API keys and secrets using Supabase
+tags: ["security", "secrets", "api-keys", "supabase", "environment-variables"]
+globs: ["src/config.ts", "app/config.py", "settings-ui.html", "**/supabase_client.py", "**/supabaseClient.js"]
+
+---
+
+# API Key & Secret Management Standards
+
+## Storage Location
+- **Mandatory**: All user-provided API keys, tokens, and other secrets (e.g., OpenAI API Key, Jira API Token, specific tool credentials) **must** be stored in a dedicated, secure table within **Supabase** (e.g., `api_keys`).
+- **No Hardcoding**: Secrets **must never** be hardcoded into source code, configuration files, or committed to version control.
+- **No `.env` Files in Repo**: Do not commit `.env` files containing secrets to the GitHub repository. Use `.env.example` for documentation purposes only.
+
+## Security Measures (Supabase)
+- **Encryption**: Ensure the Supabase table storing secrets uses encryption at rest.
+- **Row Level Security (RLS)**: Implement strict RLS policies to ensure users can only access and manage their *own* secrets.
+- **Access Control**: Access to the Supabase table should be tightly controlled, primarily through the MCP Forge backend service using the `SERVICE_ROLE_KEY`.
+
+## User Interface (Settings Section)
+- Provide a dedicated **Settings Section** in the MCP Forge UI for users to securely add, view (masked), update, and delete their API keys stored in Supabase.
+- **Masking**: Always mask secret values in the UI after entry.
+
+## Injection into Deployments
+- Secrets **must** be injected into deployed MCP servers (running on Coolify) **exclusively** as **environment variables**.
+- This injection process should be handled securely by the deployment system (MCP Forge backend interacting with Coolify API) during the deployment setup.
+- Generated server code **must** be written to read secrets from environment variables.
+
+## Naming Convention
+- Use clear and consistent naming conventions for environment variables (e.g., `OPENAI_API_KEY`, `JIRA_API_TOKEN`).
+- Document the required environment variable names in the server's README or output.
+
+## Least Privilege
+- Encourage users to create API keys with the minimum required permissions for the intended tool functionality.
+
+## References
+- `supabase-integration.mdc`
+- `deployment-workflow.mdc`
+- `security-best-practices.mdc`
+- [Supabase Vault (Consider for enhanced security)](mdc:https:/supabase.com/docs/guides/vault)
+```

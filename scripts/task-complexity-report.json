@@ -1,0 +1,91 @@
+{
+  "meta": {
+    "generatedAt": "2025-04-15T17:08:05.695Z",
+    "tasksAnalyzed": 10,
+    "thresholdScore": 5,
+    "projectName": "Your Project Name",
+    "usedResearch": true
+  },
+  "complexityAnalysis": [
+    {
+      "taskId": 1,
+      "taskTitle": "Setup Project Structure and Supabase Integration",
+      "complexityScore": 8,
+      "recommendedSubtasks": 6,
+      "expansionPrompt": "Break down the task into subtasks for initializing the repository, setting up frontend and backend frameworks, configuring Supabase features (authentication, database, storage), and implementing environment variable management.",
+      "reasoning": "This task involves multiple components, including frontend and backend setup, database configuration, and integration with Supabase. The complexity arises from the need to configure security policies, database schemas, and extensions like pgvector."
+    },
+    {
+      "taskId": 2,
+      "taskTitle": "Implement User Authentication and Settings Management",
+      "complexityScore": 7,
+      "recommendedSubtasks": 5,
+      "expansionPrompt": "Divide the task into subtasks for creating authentication flows, designing the settings UI, implementing API key management, and adding backend endpoints with validation and security measures.",
+      "reasoning": "The task is moderately complex due to the need for secure API key management, session handling, and integration of Supabase authentication features with a user-friendly UI."
+    },
+    {
+      "taskId": 3,
+      "taskTitle": "Build Multi-Step Wizard UI",
+      "complexityScore": 6,
+      "recommendedSubtasks": 5,
+      "expansionPrompt": "Break down the task into subtasks for designing each step of the wizard, implementing navigation and state management, and ensuring responsive design and validation.",
+      "reasoning": "The complexity is manageable as it primarily involves frontend development with state management and responsive design considerations."
+    },
+    {
+      "taskId": 4,
+      "taskTitle": "Implement Documentation Analysis and Semantic Search",
+      "complexityScore": 9,
+      "recommendedSubtasks": 6,
+      "expansionPrompt": "Divide the task into subtasks for implementing document upload, text extraction, embedding generation, semantic search, and creating backend endpoints with error handling.",
+      "reasoning": "This task is highly complex due to the integration of multiple technologies, including file processing, embedding generation, and vector-based search."
+    },
+    {
+      "taskId": 5,
+      "taskTitle": "Develop Requirements Analysis System",
+      "complexityScore": 8,
+      "recommendedSubtasks": 5,
+      "expansionPrompt": "Break down the task into subtasks for integrating the OpenAI API, designing prompt engineering, creating a UI for clarifying questions, and structuring output for requirements.",
+      "reasoning": "The complexity stems from the need to design an AI-driven system with prompt engineering and semantic search integration."
+    },
+    {
+      "taskId": 6,
+      "taskTitle": "Implement MCP Server Code Generation",
+      "complexityScore": 9,
+      "recommendedSubtasks": 6,
+      "expansionPrompt": "Divide the task into subtasks for creating code templates, implementing dynamic resource generation, and ensuring compliance with MCP specifications.",
+      "reasoning": "This task is highly complex due to the need for dynamic code generation, compliance with standards, and integration of multiple tools and frameworks."
+    },
+    {
+      "taskId": 7,
+      "taskTitle": "Implement GitHub Integration",
+      "complexityScore": 7,
+      "recommendedSubtasks": 5,
+      "expansionPrompt": "Break down the task into subtasks for integrating the GitHub API, initializing repositories, pushing code, and handling errors.",
+      "reasoning": "The complexity is moderate as it involves API integration and repository management with error handling."
+    },
+    {
+      "taskId": 8,
+      "taskTitle": "Implement Coolify Deployment Integration",
+      "complexityScore": 8,
+      "recommendedSubtasks": 6,
+      "expansionPrompt": "Divide the task into subtasks for integrating the Coolify API, configuring deployment settings, and implementing monitoring and error handling.",
+      "reasoning": "The complexity arises from the need to handle deployment configurations, monitor statuses, and manage custom domains."
+    },
+    {
+      "taskId": 9,
+      "taskTitle": "Implement Open Source MCP Server Deployment",
+      "complexityScore": 7,
+      "recommendedSubtasks": 5,
+      "expansionPrompt": "Break down the task into subtasks for cloning repositories, detecting languages, configuring builds, and validating MCP compliance.",
+      "reasoning": "The task is moderately complex due to the need for handling diverse repository structures and ensuring protocol compliance."
+    },
+    {
+      "taskId": 10,
+      "taskTitle": "Implement Testing and Monitoring System",
+      "complexityScore": 6,
+      "recommendedSubtasks": 4,
+      "expansionPrompt": "Divide the task into subtasks for implementing test execution, health monitoring, and performance metrics collection.",
+      "reasoning": "The complexity is relatively low as it focuses on testing and monitoring functionalities, which are well-defined and modular."
+    }
+  ]
+}

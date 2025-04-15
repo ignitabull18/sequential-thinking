@@ -1,0 +1,25 @@
+# Task ID: 6
+# Title: Implement MCP Server Code Generation
+# Status: pending
+# Dependencies: 5
+# Priority: high
+# Description: Create the system for generating standards-compliant MCP server code in Node.js or Python based on analyzed requirements.
+# Details:
+1. Develop code generation templates for Node.js (Express, @modelcontextprotocol/sdk)
+2. Develop code generation templates for Python (Flask, mcp-server-sdk)
+3. Implement dynamic tool/resource generation based on requirements
+4. Create standard endpoints (/sse, /messages, /health, /info, /docs)
+5. Implement error handling, CORS, and environment variable usage
+6. Generate input validation using Zod (Node.js) or Pydantic (Python)
+7. Create test case generation for each tool/resource
+8. Implement Claude Desktop configuration snippet generation
+9. Ensure all generated code follows MCP protocol specification
+
+# Test Strategy:
+1. Test code generation with various requirement sets
+2. Verify generated code compiles and runs without errors
+3. Validate standard endpoints are implemented correctly
+4. Test generated input validation
+5. Confirm error handling works as expected
+6. Verify generated test cases are valid and useful
+7. Test Claude Desktop configuration snippet

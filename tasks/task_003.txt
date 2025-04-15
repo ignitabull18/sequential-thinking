@@ -1,0 +1,24 @@
+# Task ID: 3
+# Title: Build Multi-Step Wizard UI
+# Status: pending
+# Dependencies: 2
+# Priority: high
+# Description: Create the web-based, multi-step wizard interface for MCP server creation and deployment.
+# Details:
+1. Design and implement the 5-step wizard UI using Tailwind CSS and DaisyUI
+2. Create Step 1: Server description input or GitHub URL entry
+3. Create Step 2: Documentation upload with drag-and-drop functionality
+4. Create Step 3: GitHub and Coolify credentials input
+5. Create Step 4: Build progress with real-time updates using anime.js
+6. Create Step 5: Results display with links and configuration
+7. Implement form validation and error handling
+8. Add responsive design for all screen sizes
+9. Create navigation between steps with state preservation
+
+# Test Strategy:
+1. Test UI rendering on different screen sizes
+2. Verify form validation works correctly
+3. Test navigation between steps
+4. Confirm file upload functionality works
+5. Validate real-time updates in the build progress step
+6. Test error handling and user feedback

@@ -1,0 +1,55 @@
+---
+description: Documentation storage and retrieval.
+globs: 
+alwaysApply: false
+---
+ ```mdc
+description: Standards for processing, embedding, and searching user-uploaded documentation
+tags: ["documentation", "embedding", "semantic-search", "supabase", "pgvector", "openai", "ai"]
+globs: ["src/doc_processor.py", "src/semantic_search.js", "app/services/embedding_service.py"]
+
+---
+
+# Documentation Embedding & Search Standards
+
+## Purpose
+- To leverage user-provided documentation (API specs, guides, examples) to enhance:
+    - **Requirements Analysis**: Better understanding of user needs.
+    - **Code Generation**: Providing relevant context for generating MCP tools/resources.
+    - **Future Retrieval**: Allowing users to search their uploaded documents.
+
+## Workflow
+1.  **Upload**: User uploads documentation files via the UI.
+2.  **Storage (Optional)**: Store the raw file in **Supabase Storage**.
+3.  **Text Extraction**: Extract plain text content from the uploaded files (support common formats like PDF, TXT, MD, potentially DOCX).
+4.  **Chunking**: Divide the extracted text into meaningful chunks suitable for embedding (e.g., paragraphs, sections).
+5.  **Embedding Generation**: Generate vector embeddings for each text chunk using a designated embedding model (e.g., OpenAI `text-embedding-3-small`). Store the model used.
+6.  **Storage (Database)**: Store the original text chunk, its vector embedding, and metadata (source document ID, user ID, chunk index) in a dedicated **Supabase PostgreSQL table** (e.g., `documents`) equipped with the `pgvector` extension.
+    - The table must include a `vector` column of the appropriate dimension.
+    - Include `user_id` and enforce RLS.
+7.  **Indexing**: Ensure appropriate indexing (e.g., IVFFlat or HNSW) is created on the `vector` column in Supabase for efficient similarity searches.
+
+## Semantic Search Implementation
+- **Backend Functionality**: Implement a backend function/endpoint that takes a query text and performs a semantic similarity search against the `documents` table using pgvector functions (e.g., cosine distance `<=>`).
+- **Filtering**: The search **must** be filtered by `user_id` to respect data privacy (enforced by RLS).
+- **Usage**: This search functionality will be invoked by:
+    - The requirements analysis agent.
+    - The code generation agent.
+    - Potentially a user-facing search feature in the future.
+
+## Security & Privacy
+- **RLS**: Row Level Security **must** be strictly enforced on the `documents` table to ensure users can only access/search their own data.
+- **Embedding Model Keys**: The API key for the embedding model (e.g., `OPENAI_API_KEY`) **must** be stored securely and accessed only by the backend service. See `api-key-management.mdc`.
+
+## Technology Stack
+- **Storage**: Supabase Storage (optional for raw files), Supabase PostgreSQL.
+- **Vector Database**: Supabase PostgreSQL with `pgvector` extension.
+- **Embedding Model**: OpenAI API (or alternative, configurable via env var).
+- **Backend Logic**: Python/Node.js service to handle extraction, embedding, storage, and search.
+
+## References
+- `supabase-integration.mdc`
+- `api-key-management.mdc`
+- [Supabase pgvector Guide](mdc:https:/supabase.com/docs/guides/database/extensions/pgvector)
+- [OpenAI Embeddings](mdc:https:/platform.openai.com/docs/guides/embeddings)
+```

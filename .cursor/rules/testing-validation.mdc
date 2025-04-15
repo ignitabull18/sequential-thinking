@@ -1,0 +1,44 @@
+---
+description: When running tests and validation.
+globs: 
+alwaysApply: false
+---
+ ```mdc
+description: Requirements for testing and validation of generated MCP servers
+tags: ["testing", "validation", "qa", "automation", "mcp"]
+globs: ["tests/**", "*.test.js", "*_test.py"]
+
+---
+
+# Testing and Validation Standards
+
+## Automated Test Generation
+- **Mandatory**: For each generated MCP server, the system **must** automatically generate a basic set of test cases.
+- **Scope**: These tests should, at a minimum, verify:
+    - The server starts successfully.
+    - All standard MCP endpoints (`/sse`, `/messages`, `/health`, `/info`, `/docs`) are present and return expected status codes (e.g., `200 OK` for GET requests, appropriate codes for POST).
+    - Basic functionality of each generated tool (if feasible to test without complex setup or credentials). This might involve sending a simple request via `/messages` and checking for a valid, non-error response structure.
+
+## Test Execution
+- **Automation**: The generated tests should be runnable automatically as part of the generation/deployment pipeline (e.g., within a temporary environment before final deployment or as a post-deployment check).
+- **Reporting**: The results of these automated tests (pass/fail) **must** be reported back to the user in the final step of the UI wizard.
+
+## Health Check Endpoint
+- **Critical**: The `/health` endpoint is crucial.
+- **Functionality**: It should return a `200 OK` status code and a simple JSON body (e.g., `{"status": "ok"}`) if the server is running correctly.
+- **Coolify Integration**: This endpoint **must** be used by Coolify for deployment health checks and ongoing monitoring. See `deployment-workflow.mdc`.
+
+## Manual Testing Guidance
+- Provide guidance or examples in the generated server's README on how users can perform more comprehensive manual testing, especially for tools requiring specific API keys or complex inputs.
+
+## Technology
+- **Node.js**: Use standard testing frameworks like Jest or Vitest.
+- **Python**: Use standard testing frameworks like `unittest` or `pytest`.
+
+## Limitations
+- Acknowledge that fully automated testing of all tool functionalities might be complex or impossible due to dependencies on external services and API keys. The goal is basic validation, not exhaustive E2E testing.
+
+## References
+- `mcp-server-generation.mdc`
+- `deployment-workflow.mdc`
+```
